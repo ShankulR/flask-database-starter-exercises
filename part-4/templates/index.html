@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System | Part-4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #818cf8;
+      --primary-hover: #a5b4fc;
+      --bg: #09090b;
+      --card-bg: #18181b;
+      --text-main: #fafafa;
+      --text-muted: #a1a1aa;
+      --border: #27272a;
+    }
+
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { 
+      margin: 0; background-color: var(--bg); color: var(--text-main); min-height: 100vh;
+      background-image: radial-gradient(at 0% 0%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);
+      padding-bottom: 50px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    header { padding: 40px 0; text-align: center; }
+    
+    .logo-area {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--card-bg); padding: 10px 24px; border-radius: 100px; border: 1px solid var(--border);
+    }
+    .logo-icon {
+      width: 40px; height: 40px; background: var(--primary);
+      border-radius: 12px; display: grid; place-items: center; color: #000; font-size: 20px; font-weight: 800;
+    }
+
+    .action-panel {
+      background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px);
+      border: 1px solid var(--border); padding: 30px; border-radius: 24px; margin-bottom: 40px;
+    }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 120px auto; gap: 15px; align-items: end; }
+    .input-group label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    input, select {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--border);
+      background: #09090b; color: white; border-radius: 12px; font-size: 14px; outline: none; transition: 0.2s;
+    }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.1); }
+
+    .btn {
+      padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s;
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+    }
+    .btn-primary { background: var(--primary); color: #000; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-outline:hover { background: var(--border); }
+    .btn-danger { background: #450a0a; color: #fecaca; }
+
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-bottom: 25px; flex-wrap: wrap;
+    }
+    .search-wrapper { flex: 1; min-width: 300px; position: relative; }
+    .search-wrapper input { padding-left: 45px; background: var(--card-bg); border-radius: 16px; }
+    .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+    .card {
+      background: var(--card-bg); padding: 24px; border-radius: 20px;
+      border: 1px solid var(--border); transition: 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .card-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .card-author { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; }
+    .badge { display: inline-block; background: #27272a; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--primary); }
+
+    .pagination { margin-top: 40px; display: flex; justify-content: center; align-items: center; gap: 20px; }
+
+    @media (max-width: 850px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">LBM</div>
+      <h1 style="margin:0; font-size: 1.5rem;">Library <span style="color: var(--primary)">Management System</span></h1>
+    </div>
+  </header>
+
+  <div class="action-panel">
+    <div class="form-grid">
+      <div class="input-group">
+        <label>Book Title</label>
+        <input id="title" placeholder="e.g. Neuromancer" />
+      </div>
+      <div class="input-group">
+        <label>Author</label>
+        <input id="author" placeholder="e.g. William Gibson" />
+      </div>
+      <div class="input-group">
+        <label>Year</label>
+        <input id="year" type="number" placeholder="YYYY" />
+      </div>
+      <button class="btn btn-primary" onclick="addBook()">+ Add Book</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input id="search" placeholder="Search archives by title or author..." oninput="page=1; load()" />
+    </div>
+    <select id="sort" style="width: 150px; background: var(--card-bg);" onchange="load()">
+      <option value="id">Date Added</option>
+      <option value="title">Alphabetical</option>
+      <option value="author">By Author</option>
+      <option value="year">By Year</option>
+    </select>
+  </div>
+
+  <h3 id="info" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; font-weight: 400;">Accessing database...</h3>
+
+  <div id="books" class="grid"></div>
+
+  <div class="pagination">
+    <button id="prev" class="btn btn-outline" onclick="page--;load()">← Prev</button>
+    <span id="page-num" style="font-weight: 800; font-size: 14px;">Page 1</span>
+    <button id="next" class="btn btn-outline" onclick="page++;load()">Next →</button>
+  </div>
+</div>
+
+<script>
+  let page=1, pages=1, perPage=6;
+  const $=x=>document.getElementById(x);
+
+  async function load(){
+    const query = $("search").value;
+    const res = await fetch(`/api/books?page=${page}&per_page=${perPage}&sort=${$("sort").value}&order=desc&q=${encodeURIComponent(query)}`);
+    const d = await res.json(); 
+    pages = d.pages;
+
+    $("info").innerText = query ? `Matches: ${d.total}` : `Collection size: ${d.total} items`;
+    $("page-num").innerText = `Page ${d.page} of ${Math.max(d.pages, 1)}`;
+    $("prev").style.visibility = page <= 1 ? "hidden" : "visible"; 
+    $("next").style.visibility = page >= pages ? "hidden" : "visible";
+
+    if(d.books.length === 0) {
+      $("books").innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 20px;">No records found.</div>`;
+      return;
+    }
+
+    $("books").innerHTML = d.books.map(b=>`
+      <div class="card">
+        <div style="font-size: 10px; font-weight: 800; color: var(--primary); margin-bottom: 10px; opacity: 0.8;">DATA_PTR: 0x${b.id}</div>
+        <div class="card-title">${b.title}</div>
+        <div class="card-author">by ${b.author}</div>
+        <div class="badge">YEAR: ${b.year||'----'}</div>
+        <div style="margin-top: 24px; display: flex; gap: 10px;">
+          <button class="btn btn-outline" style="flex:1; font-size: 12px; padding: 8px;" onclick="editBook(${b.id},'${escapeStr(b.title)}','${escapeStr(b.author)}','${b.year||""}')">Edit</button>
+          <button class="btn btn-danger" style="font-size: 12px; padding: 8px;" onclick="deleteBook(${b.id})">Delete</button>
+        </div>
+      </div>`).join("");
+  }
+
+  function escapeStr(s){ return (s||"").replace(/'/g,"\\'"); }
+
+  async function addBook(){
+    const title=$("title").value.trim();
+    const author=$("author").value.trim();
+    const year=$("year").value ? parseInt($("year").value) : null;
+    if(!title || !author) return;
+    await fetch("/api/books",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({title,author,year})
+    });
+    $("title").value=""; $("author").value=""; $("year").value="";
+    page=1; load();
+  }
+
+  async function editBook(id,title,author,year){
+    const nt=prompt("Edit Title:",title); if(!nt) return;
+    const na=prompt("Edit Author:",author); if(!na) return;
+    const ny=prompt("Edit Year:",year);
+    await fetch(`/api/books/${id}`,{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({title:nt,author:na,year:ny?parseInt(ny):null})
+    });
+    load();
+  }
+
+  async function deleteBook(id){
+    if(confirm("Confirm deletion?")) {
+      await fetch(`/api/books/${id}`,{method:"DELETE"});
+      load();
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
