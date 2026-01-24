@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/cart.png') }}" class="cart-icon">
+        <h1>Add Product</h1>
+    </div>
+
+    <div class="form-card card">
+        <form method="POST" class="form-content">
+            <label for="name">Product Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter product name" required>
+
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
+
+            <label for="price">Price</label>
+            <input type="number" id="price" step="0.01" name="price" placeholder="Enter price" required>
+
+            <button type="submit" class="btn action-btn">Add Product</button>
+        </form>
+
+        <a href="/" class="btn back">⬅ Back to Dashboard</a>
+    </div>
+
+</div>
+</body>
+</html>
